@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://example.com/default-bg.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 20px;
+        }
+
+       .container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+       .card {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="number"],
+        input[type="text"],
+        button {
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        progress {
+            width: 100%;
+        }
+
+       .bar-chart {
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+       .bar {
+            height: 100%;
+            background-color: #007BFF;
+        }
+    </style>
+    <title>多功能工具界面</title>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 码字进度 -->
+        <div class="card">
+            <h2>码字进度</h2>
+            <input type="number" id="wordCount" value="22222222" />
+            <input type="number" id="totalWordCount" value="1001" />
+            <button id="updateWordProgress">更新进度</button>
+            <progress id="wordProgress" value="100" max="100"></progress>
+            <p id="wordProgressText">已完成 22222222/1001 字，进度：100.00%</p>
+        </div>
+        <!-- 精彩语录 -->
+        <div class="card">
+            <h2>精彩语录</h2>
+            <p id="quote">"成功的秘诀在于坚持。"</p>
+            <button id="changeQuote">换一条语录</button>
+        </div>
+        <!-- 番茄时钟 -->
+        <div class="card">
+            <h2>番茄时钟</h2>
+            <p id="timer">25:00</p>
+            <button id="startTimer">开始</button>
+            <button id="stopTimer">停止</button>
+            <button id="resetTimer">重置</button>
+            <!-- 番茄时钟统计 -->
+            <div>
+                <h3>番茄时钟统计</h3>
+                <p>日统计：<span id="dailyTomatoCount">0</span></p>
+                <div class="bar-chart">
+                    <div class="bar" id="dailyBar" style="width: 0%;"></div>
+                </div>
+                <p>月统计：<span id="monthlyTomatoCount">0</span></p>
+                <div class="bar-chart">
+                    <div class="bar" id="monthlyBar" style="width: 0%;"></div>
+                </div>
+                <p>年统计：<span id="yearlyTomatoCount">0</span></p>
+                <div class="bar-chart">
+                    <div class="bar" id="yearlyBar" style="width: 0%;"></div>
+                </div>
+            </div>
+        </div>
+        <!-- 日月年计划 -->
+        <div class="card">
+            <h2>日月年计划</h2>
+            <input type="number" id="dailyPlan" value="1000" />
+            <input type="number" id="monthlyPlan" value="22" />
+            <input type="number" id="yearlyPlan" value="33" />
+            <button id="updatePlanProgress">更新计划进度</button>
+            <p>日计划进度：<span id="dailyPlanProgress">22222222.20%</span></p>
+            <progress id="dailyPlanBar" value="22222222" max="100"></progress>
+            <p>月计划进度：<span id="monthlyPlanProgress">101010100.00%</span></p>
+            <progress id="monthlyPlanBar" value="101010100" max="100"></progress>
+            <p>年计划进度：<span id="yearlyPlanProgress">67340066.67%</span></p>
+            <progress id="yearlyPlanBar" value="67340066" max="100"></progress>
+        </div>
+        <!-- 奖励惩罚机制 -->
+        <div class="card">
+            <h2>奖励惩罚机制</h2>
+            <p id="rewardMessage"></p>
+            <p>金币数量：<span id="coinCount">26</span></p>
+        </div>
+        <!-- 趣味小人 -->
+        <div class="card">
+            <h2>趣味小人</h2>
+            <span id="emoji">😊</span>
+            <button id="changeEmoji">随机切换</button>
+        </div>
+        <!-- 自定义背景音乐 -->
+        <div class="card">
+            <h2>自定义背景音乐</h2>
+            <input type="file" id="musicFile" />
+            <p id="musicFileName">继续独立音乐MV做梦团.mp3</p>
+            <button id="playMusic">播放</button>
+            <button id="pauseMusic">暂停</button>
+        </div>
+        <!-- 自定义背景 -->
+        <div class="card">
+            <h2>自定义背景</h2>
+            <input type="file" id="backgroundFile" />
+            <p id="backgroundFileName"></p>
+            <button id="applyBackground">应用</button>
+            <button id="saveBackground">保存</button>
+        </div>
+        <!-- 自定义卡片颜色 -->
+        <div class="card" style="grid-column: span 2;">
+            <h2>自定义卡片颜色</h2>
+            <input type="color" id="cardColor" />
+            <button id="applyCardColor">应用</button>
+            <button id="saveCardColor">保存</button>
+        </div>
+    </div>
+
+    <script>
+        // 精彩语录数组
+        const quotes = [
+            "生活就像海洋，只有意志坚强的人，才能到达彼岸。",
+            "每一个不曾起舞的日子，都是对生命的辜负。",
+            "成功的花，人们只惊羡她现时的明艳！然而当初她的芽儿，浸透了奋斗的泪泉，洒遍了牺牲的血雨。",
+            // 此处省略其他47条唯美语录
+        ];
+
+        // 码字进度更新
+        document.getElementById('updateWordProgress').addEventListener('click', () => {
+            const wordCount = parseInt(document.getElementById('wordCount').value);
+            const totalWordCount = parseInt(document.getElementById('totalWordCount').value);
+            const progress = (wordCount / totalWordCount) * 100;
+            document.getElementById('wordProgress').value = progress;
+            document.getElementById('wordProgressText').textContent = `已完成 ${wordCount}/${totalWordCount} 字，进度：${progress.toFixed(2)}%`;
+            // 完成码字进度更新，触发奖励
+            giveReward();
+        });
+
+        // 更换语录
+        document.getElementById('changeQuote').addEventListener('click', () => {
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            document.getElementById('quote').textContent = `"${quotes[randomIndex]}"`;
+        });
+
+        // 番茄时钟相关
+        let timer;
+        let timeLeft = 1500; // 25分钟，单位：秒
+        document.getElementById('startTimer').addEventListener('click', () => {
+            timer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById('timer').textContent = `${minutes}:${seconds < 10? '0' : ''}${seconds}`;
+                if (timeLeft === 0) {
+                    clearInterval(timer);
+                    // 完成一次番茄时钟，统计增加
+                    const dailyCount = parseInt(document.getElementById('dailyTomatoCount').textContent);
+                    document.getElementById('dailyTomatoCount').textContent = dailyCount + 1;
+                    const monthlyCount = parseInt(document.getElementById('monthlyTomatoCount').textContent);
+                    document.getElementById('monthlyTomatoCount').textContent = monthlyCount + 1;
+                    const yearlyCount = parseInt(document.getElementById('yearlyTomatoCount').textContent);
+                    document.getElementById('yearlyTomatoCount').textContent = yearlyCount + 1;
+                    // 更新柱状图
+                    updateTomatoBar('dailyBar', dailyCount + 1);
+                    updateTomatoBar('monthlyBar', monthlyCount + 1);
+                    updateTomatoBar('yearlyBar', yearlyCount + 1);
+                    // 触发奖励
+                    giveReward();
+                }
+            }, 1000);
+        });
+        document.getElementById('stopTimer').addEventListener('click', () => {
+            clearInterval(timer);
+        });
+        document.getElementById('resetTimer').addEventListener('click', () => {
+            clearInterval(timer);
+            timeLeft = 1500;
+            document.getElementById('timer').textContent = '25:00';
+        });
+
+        function updateTomatoBar(id, count) {
+            const maxCount = 30; // 假设最大统计数量为30
+            const bar = document.getElementById(id);
+            const width = (count / maxCount) * 100;
+            bar.style.width = `${width}%`;
+        }
+
+        // 日月年计划更新
+        document.getElementById('updatePlanProgress').addEventListener('click', () => {
+            const dailyPlan = parseInt(document.getElementById('dailyPlan').value);
+            const monthlyPlan = parseInt(document.getElementById('monthlyPlan').value);
+            const yearlyPlan = parseInt(document.getElementById('yearlyPlan').value);
+            const dailyProgress = (dailyPlan / 100) * 100;
+            const monthlyProgress = (monthlyPlan / 100) * 100;
+            const yearlyProgress = (yearlyPlan / 100) * 100;
+            document.getElementById('dailyPlanProgress').textContent = `${dailyProgress.toFixed(2)}%`;
+            document.getElementById('dailyPlanBar').value = dailyProgress;
+            document.getElementById('monthlyPlanProgress').textContent = `${monthlyProgress.toFixed(2)}%`;
+            document.getElementById('monthlyPlanBar').value = monthlyProgress;
+            document.getElementById('yearlyPlanProgress').textContent = `${yearlyProgress.toFixed(2)}%`;
+            document.getElementById('yearlyPlanBar').value = yearlyProgress;
+            // 完成计划进度更新，触发奖励
+            giveReward();
+        });
+
+        // 随机切换趣味小人
+        const emojis = ['😊', '😎', '🥳', '🤩', '😜']; // 更多emoji可自行添加
+        document.getElementById('changeEmoji').addEventListener('click', () => {
+            const randomIndex = Math.floor(Math.random() * emojis.length);
+            document.getElementById('emoji').textContent = emojis[randomIndex];
+        });
+
+        // 自定义背景音乐
+        document.getElementById('playMusic').addEventListener('click', () => {
+            const file = document.getElementById('musicFile').files[0];
+            if (file) {
+                const audio = new Audio(URL.createObjectURL(file));
+                audio.play();
+            }
+        });
+        document.getElementById('pauseMusic').addEventListener('click', () => {
+            const audioElements = document.querySelectorAll('audio');
+            audioElements.forEach(audio => audio.pause());
+        });
+
+        // 自定义背景
+        document.getElementById('applyBackground').addEventListener('click', () => {
+            const file = document.getElementById('backgroundFile').files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.body.style.backgroundImage = `url('${e.target.result}')`;
+                    document.getElementById('backgroundFileName').textContent = file.name;
+                    localStorage.setItem('backgroundDataUrl', e.target.result);
+                    localStorage.setItem('backgroundFileName', file.name);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        document.getElementById('saveBackground').addEventListener('click', () => {
+            const dataUrl = localStorage.getItem('backgroundDataUrl');
+            if (dataUrl) {
+                document.body.style.backgroundImage = `url('${dataUrl}')`;
+            }
+        });
+
+        // 自定义卡片颜色
+        document.getElementById('applyCardColor').addEventListener('click', () => {
+            const color = document.getElementById('cardColor').value;
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => card.style.backgroundColor = color);
+            localStorage.setItem('cardColor', color);
+        });
+        document.getElementById('saveCardColor').addEventListener('click', () => {
+            const color = document.getElementById('cardColor').value;
+            localStorage.setItem('cardColor', color);
+        });
+
+        // 奖励函数
+        function giveReward() {
+            const coin = Math.floor(Math.random() * 30) + 1;
+            const coinCountElement = document.getElementById('coinCount');
+            const currentCoins = parseInt(coinCountElement.textContent);
+            const newCoins = currentCoins + coin;
+            coinCountElement.textContent = newCoins;
+            document.getElementById('rewardMessage').textContent = `恭喜你，完成任务！奖励 ${coin} 金币`;
+            // 保存金币数量到本地存储
+            localStorage.setItem('coinCount', newCoins);
+        }
+
+        // 页面加载时恢复状态
+        window.onload = () => {
+            // 恢复背景
+            const savedDataUrl = localStorage.getItem('backgroundDataUrl');
+            const savedFileName = localStorage.getItem('backgroundFileName');
+            if (savedDataUrl && savedFileName) {
+                document.body.style.backgroundImage = `url('${savedDataUrl}')`;
+                document.getElementById('backgroundFileName').textContent = savedFileName;
+            }
+            // 恢复卡片颜色
+            const savedColor = localStorage.getItem('cardColor');
+            if (savedColor) {
+                const cards = document.querySelectorAll('.card');
+                cards.forEach(card => card.style.backgroundColor = savedColor);
+            }
+            // 恢复金币数量
+            const savedCoins = localStorage.getItem('coinCount');
+            if (savedCoins) {
+                document.getElementById('coinCount').textContent = savedCoins;
+            }
+        };
+    </script>
+</body>
+
+</html>
