@@ -1,336 +1,443 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>游戏化码字网站</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-image: url('https://example.com/default-bg.jpg');
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            margin: 0;
-            padding: 20px;
-        }
-
-       .container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            margin: 20px;
+            transition: background 0.5s ease;
+            color: #4e342e;
+            text-shadow: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
             gap: 20px;
+            background-color: #fdf6e3;
         }
 
-       .card {
-            background-color: #f9f9f9;
+        .card {
+            background: linear-gradient(135deg, #fbe9e7 0%, #ffe0b2 100%);
+            border-radius: 15px;
             padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
         }
 
-        input[type="number"],
-        input[type="text"],
-        button {
-            padding: 8px;
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            color: #6d4c41;
+        }
+
+        .card input,
+        .card button {
             margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
         }
 
-        button {
-            background-color: #007BFF;
+        .card input {
+            background-color: #fff8e1;
+            border: 1px solid #ffcc80;
+        }
+
+        .card button {
+            background-color: #ffb74d;
             color: white;
             cursor: pointer;
         }
 
-        button:hover {
-            background-color: #0056b3;
+        .card button:hover {
+            background-color: #ffa726;
         }
 
-        progress {
+        #progress-bar {
             width: 100%;
+            background-color: #f3f3f3;
+            border-radius: 5px;
+            margin-top: 10px;
         }
 
-       .bar-chart {
+        #progress {
+            width: 0%;
+            height: 30px;
+            background-color: #4CAF50;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            border-radius: 5px;
+        }
+
+        #timer {
+            font-size: 36px;
+            margin: 10px 0;
+        }
+
+        #character-icon {
+            width: 100px;
+            height: 100px;
+            margin-top: 10px;
+        }
+
+        /* 柱状图样式 */
+        .bar-chart {
+            margin-top: 10px;
+        }
+
+        .bar {
             height: 20px;
-            background-color: #f0f0f0;
-            border-radius: 3px;
-            overflow: hidden;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            text-align: right;
+            padding-right: 5px;
+            color: white;
         }
 
-       .bar {
-            height: 100%;
-            background-color: #007BFF;
+        @media screen and (orientation: landscape) {
+            body {
+                justify-content: space-around;
+            }
+
+            .card {
+                width: 45%;
+            }
         }
     </style>
-    <title>多功能工具界面</title>
 </head>
 
 <body>
-    <div class="container">
-        <!-- 码字进度 -->
-        <div class="card">
-            <h2>码字进度</h2>
-            <input type="number" id="wordCount" value="22222222" />
-            <input type="number" id="totalWordCount" value="1001" />
-            <button id="updateWordProgress">更新进度</button>
-            <progress id="wordProgress" value="100" max="100"></progress>
-            <p id="wordProgressText">已完成 22222222/1001 字，进度：100.00%</p>
-        </div>
-        <!-- 精彩语录 -->
-        <div class="card">
-            <h2>精彩语录</h2>
-            <p id="quote">"成功的秘诀在于坚持。"</p>
-            <button id="changeQuote">换一条语录</button>
-        </div>
-        <!-- 番茄时钟 -->
-        <div class="card">
-            <h2>番茄时钟</h2>
-            <p id="timer">25:00</p>
-            <button id="startTimer">开始</button>
-            <button id="stopTimer">停止</button>
-            <button id="resetTimer">重置</button>
-            <!-- 番茄时钟统计 -->
-            <div>
-                <h3>番茄时钟统计</h3>
-                <p>日统计：<span id="dailyTomatoCount">0</span></p>
-                <div class="bar-chart">
-                    <div class="bar" id="dailyBar" style="width: 0%;"></div>
-                </div>
-                <p>月统计：<span id="monthlyTomatoCount">0</span></p>
-                <div class="bar-chart">
-                    <div class="bar" id="monthlyBar" style="width: 0%;"></div>
-                </div>
-                <p>年统计：<span id="yearlyTomatoCount">0</span></p>
-                <div class="bar-chart">
-                    <div class="bar" id="yearlyBar" style="width: 0%;"></div>
-                </div>
-            </div>
-        </div>
-        <!-- 日月年计划 -->
-        <div class="card">
-            <h2>日月年计划</h2>
-            <input type="number" id="dailyPlan" value="1000" />
-            <input type="number" id="monthlyPlan" value="22" />
-            <input type="number" id="yearlyPlan" value="33" />
-            <button id="updatePlanProgress">更新计划进度</button>
-            <p>日计划进度：<span id="dailyPlanProgress">22222222.20%</span></p>
-            <progress id="dailyPlanBar" value="22222222" max="100"></progress>
-            <p>月计划进度：<span id="monthlyPlanProgress">101010100.00%</span></p>
-            <progress id="monthlyPlanBar" value="101010100" max="100"></progress>
-            <p>年计划进度：<span id="yearlyPlanProgress">67340066.67%</span></p>
-            <progress id="yearlyPlanBar" value="67340066" max="100"></progress>
-        </div>
-        <!-- 奖励惩罚机制 -->
-        <div class="card">
-            <h2>奖励惩罚机制</h2>
-            <p id="rewardMessage"></p>
-            <p>金币数量：<span id="coinCount">26</span></p>
-        </div>
-        <!-- 趣味小人 -->
-        <div class="card">
-            <h2>趣味小人</h2>
-            <span id="emoji">😊</span>
-            <button id="changeEmoji">随机切换</button>
-        </div>
-        <!-- 自定义背景音乐 -->
-        <div class="card">
-            <h2>自定义背景音乐</h2>
-            <input type="file" id="musicFile" />
-            <p id="musicFileName">继续独立音乐MV做梦团.mp3</p>
-            <button id="playMusic">播放</button>
-            <button id="pauseMusic">暂停</button>
-        </div>
-        <!-- 自定义背景 -->
-        <div class="card">
-            <h2>自定义背景</h2>
-            <input type="file" id="backgroundFile" />
-            <p id="backgroundFileName"></p>
-            <button id="applyBackground">应用</button>
-            <button id="saveBackground">保存</button>
-        </div>
-        <!-- 自定义卡片颜色 -->
-        <div class="card" style="grid-column: span 2;">
-            <h2>自定义卡片颜色</h2>
-            <input type="color" id="cardColor" />
-            <button id="applyCardColor">应用</button>
-            <button id="saveCardColor">保存</button>
-        </div>
+    <!-- 码字进度 -->
+    <div class="card" id="progress-section">
+        <h2>码字进度</h2>
+        <input type="number" id="current-word-count" placeholder="当前码字数量">
+        <input type="number" id="target-word-count" placeholder="目标码字数量">
+        <button onclick="updateProgress()">更新进度</button>
+        <div id="progress-bar"></div>
+        <p id="progress-text"></p>
+    </div>
+
+    <!-- 精彩语录 -->
+    <div class="card" id="quote-section">
+        <h2>精彩语录</h2>
+        <p id="quote-text">“成功的秘诀在于坚持。”</p>
+        <button onclick="getNewQuote()">换一条语录</button>
+    </div>
+
+    <!-- 番茄时钟 -->
+    <div class="card" id="pomodoro-section">
+        <h2>番茄时钟</h2>
+        <p id="timer">25:00</p>
+        <button onclick="startTimer()">开始</button>
+        <button onclick="stopTimer()">停止</button>
+        <button onclick="resetTimer()">重置</button>
+    </div>
+
+    <!-- 日月年计划 -->
+    <div class="card" id="plan-section">
+        <h2>日月年计划</h2>
+        <input type="number" id="daily-target" placeholder="日目标码字数量">
+        <input type="number" id="monthly-target" placeholder="月目标码字数量">
+        <input type="number" id="yearly-target" placeholder="年目标码字数量">
+        <button onclick="updatePlanProgress()">更新计划进度</button>
+        <p id="daily-progress"></p>
+        <p id="monthly-progress"></p>
+        <p id="yearly-progress"></p>
+        <!-- 柱状图容器 -->
+        <div class="bar-chart" id="plan-chart"></div>
+    </div>
+
+    <!-- 奖励惩罚机制 -->
+    <div class="card" id="reward-punishment-section">
+        <h2>奖励惩罚机制</h2>
+        <p id="reward-punishment-text">暂无奖励或惩罚</p>
+        <p id="gold-count">金币数量: <span id="gold-value">0</span></p>
+    </div>
+
+    <!-- 趣味小人图标 -->
+    <div class="card" id="character-section">
+        <h2>趣味小人</h2>
+        <span id="character-icon">😀</span>
+    </div>
+
+    <!-- 自定义背景音乐 -->
+    <div class="card" id="music-section">
+        <h2>自定义背景音乐</h2>
+        <input type="file" id="music-file" accept="audio/*">
+        <button onclick="playMusic()">播放</button>
+        <button onclick="pauseMusic()">暂停</button>
+        <audio id="music-player"></audio>
+    </div>
+
+    <!-- 自定义背景颜色和图案 -->
+    <div class="card" id="background-section">
+        <h2>自定义背景</h2>
+        <input type="color" id="background-color">
+        <input type="file" id="background-image" accept="image/*">
+        <button onclick="applyBackground()">应用</button>
+        <button onclick="saveBackground()">保存</button>
+    </div>
+
+    <!-- 自定义卡片颜色 -->
+    <div class="card" id="card-color-section">
+        <h2>自定义卡片颜色</h2>
+        <input type="color" id="card-color">
+        <button onclick="applyCardColor()">应用</button>
+        <button onclick="saveCardColor()">保存</button>
     </div>
 
     <script>
-        // 精彩语录数组
+        // 加载本地存储的数据
+        let currentWordCount = parseInt(localStorage.getItem('currentWordCount')) || 0;
+        let targetWordCount = parseInt(localStorage.getItem('targetWordCount')) || 0;
+        let dailyTarget = parseInt(localStorage.getItem('dailyTarget')) || 0;
+        let monthlyTarget = parseInt(localStorage.getItem('monthlyTarget')) || 0;
+        let yearlyTarget = parseInt(localStorage.getItem('yearlyTarget')) || 0;
+        let goldCount = parseInt(localStorage.getItem('goldCount')) || 0;
+
+        // 读取存储的卡片颜色
+        let cardColor = localStorage.getItem('cardColor');
+        if (cardColor) {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.style.backgroundColor = cardColor;
+                card.style.backgroundImage = 'none';
+            });
+            document.getElementById('card-color').value = cardColor;
+        }
+
+        // 读取存储的背景设置
+        let bgColor = localStorage.getItem('bgColor');
+        let bgImage = localStorage.getItem('bgImage');
+        if (bgColor) {
+            document.body.style.backgroundColor = bgColor;
+            document.getElementById('background-color').value = bgColor;
+        }
+        if (bgImage) {
+            document.body.style.background = `url(${bgImage})`;
+            document.body.style.backgroundSize = 'cover';
+        }
+
+        document.getElementById('current-word-count').value = currentWordCount;
+        document.getElementById('target-word-count').value = targetWordCount;
+        document.getElementById('daily-target').value = dailyTarget;
+        document.getElementById('monthly-target').value = monthlyTarget;
+        document.getElementById('yearly-target').value = yearlyTarget;
+        document.getElementById('gold-value').textContent = goldCount;
+
+        // 码字进度
+        function updateProgress() {
+            currentWordCount = parseInt(document.getElementById('current-word-count').value);
+            targetWordCount = parseInt(document.getElementById('target-word-count').value);
+            let progress = (currentWordCount / targetWordCount) * 100;
+            // 确保进度不超过 100%
+            progress = Math.min(progress, 100);
+
+            const progressBar = document.getElementById('progress-bar');
+            progressBar.innerHTML = `<div id="progress" style="width: ${progress}%"></div>`;
+
+            const progressText = document.getElementById('progress-text');
+            progressText.textContent = `已完成 ${currentWordCount}/${targetWordCount} 字，进度：${progress.toFixed(2)}%`;
+
+            checkRewardPunishment(progress);
+
+            // 保存数据到本地存储
+            localStorage.setItem('currentWordCount', currentWordCount);
+            localStorage.setItem('targetWordCount', targetWordCount);
+        }
+
+        // 精彩语录
         const quotes = [
-            "生活就像海洋，只有意志坚强的人，才能到达彼岸。",
-            "每一个不曾起舞的日子，都是对生命的辜负。",
-            "成功的花，人们只惊羡她现时的明艳！然而当初她的芽儿，浸透了奋斗的泪泉，洒遍了牺牲的血雨。",
-            // 此处省略其他47条唯美语录
+            "“成功的秘诀在于坚持。”",
+            "“每一个字都是通往梦想的一步。”",
+            "“写作是灵魂的出口。”",
+            "“笔锋所至，皆是心中的山河。”",
+            "“文字是时间的琥珀，凝固着瞬间的灵感。”",
+            "“在文字的海洋里，每一次书写都是一次远航。”",
+            "“写作是用文字搭建的时光机，穿梭于想象与现实之间。”",
+            "“用文字编织故事，用故事温暖世界。”",
+            "“每一个字符都是一颗星辰，汇聚成璀璨的文学宇宙。”",
+            "“写作是一场与自己的对话，探寻内心深处的声音。”"
         ];
 
-        // 码字进度更新
-        document.getElementById('updateWordProgress').addEventListener('click', () => {
-            const wordCount = parseInt(document.getElementById('wordCount').value);
-            const totalWordCount = parseInt(document.getElementById('totalWordCount').value);
-            const progress = (wordCount / totalWordCount) * 100;
-            document.getElementById('wordProgress').value = progress;
-            document.getElementById('wordProgressText').textContent = `已完成 ${wordCount}/${totalWordCount} 字，进度：${progress.toFixed(2)}%`;
-            // 完成码字进度更新，触发奖励
-            giveReward();
-        });
-
-        // 更换语录
-        document.getElementById('changeQuote').addEventListener('click', () => {
+        function getNewQuote() {
             const randomIndex = Math.floor(Math.random() * quotes.length);
-            document.getElementById('quote').textContent = `"${quotes[randomIndex]}"`;
-        });
+            const quoteText = document.getElementById('quote-text');
+            quoteText.textContent = quotes[randomIndex];
+        }
 
-        // 番茄时钟相关
-        let timer;
-        let timeLeft = 1500; // 25分钟，单位：秒
-        document.getElementById('startTimer').addEventListener('click', () => {
-            timer = setInterval(() => {
-                timeLeft--;
+        // 番茄时钟
+        let timerInterval;
+        let timeLeft = 25 * 60;
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
                 const minutes = Math.floor(timeLeft / 60);
                 const seconds = timeLeft % 60;
-                document.getElementById('timer').textContent = `${minutes}:${seconds < 10? '0' : ''}${seconds}`;
-                if (timeLeft === 0) {
-                    clearInterval(timer);
-                    // 完成一次番茄时钟，统计增加
-                    const dailyCount = parseInt(document.getElementById('dailyTomatoCount').textContent);
-                    document.getElementById('dailyTomatoCount').textContent = dailyCount + 1;
-                    const monthlyCount = parseInt(document.getElementById('monthlyTomatoCount').textContent);
-                    document.getElementById('monthlyTomatoCount').textContent = monthlyCount + 1;
-                    const yearlyCount = parseInt(document.getElementById('yearlyTomatoCount').textContent);
-                    document.getElementById('yearlyTomatoCount').textContent = yearlyCount + 1;
-                    // 更新柱状图
-                    updateTomatoBar('dailyBar', dailyCount + 1);
-                    updateTomatoBar('monthlyBar', monthlyCount + 1);
-                    updateTomatoBar('yearlyBar', yearlyCount + 1);
-                    // 触发奖励
-                    giveReward();
+                const timer = document.getElementById('timer');
+                timer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                if (timeLeft > 0) {
+                    timeLeft--;
+                } else {
+                    clearInterval(timerInterval);
+                    alert('时间到！休息一下吧。');
+                    // 完成一个番茄钟奖励 1 金币
+                    goldCount++;
+                    document.getElementById('gold-value').textContent = goldCount;
+                    localStorage.setItem('goldCount', goldCount);
+                    timeLeft = 25 * 60;
+                    timer.textContent = '25:00';
                 }
             }, 1000);
-        });
-        document.getElementById('stopTimer').addEventListener('click', () => {
-            clearInterval(timer);
-        });
-        document.getElementById('resetTimer').addEventListener('click', () => {
-            clearInterval(timer);
-            timeLeft = 1500;
-            document.getElementById('timer').textContent = '25:00';
-        });
-
-        function updateTomatoBar(id, count) {
-            const maxCount = 30; // 假设最大统计数量为30
-            const bar = document.getElementById(id);
-            const width = (count / maxCount) * 100;
-            bar.style.width = `${width}%`;
         }
 
-        // 日月年计划更新
-        document.getElementById('updatePlanProgress').addEventListener('click', () => {
-            const dailyPlan = parseInt(document.getElementById('dailyPlan').value);
-            const monthlyPlan = parseInt(document.getElementById('monthlyPlan').value);
-            const yearlyPlan = parseInt(document.getElementById('yearlyPlan').value);
-            const dailyProgress = (dailyPlan / 100) * 100;
-            const monthlyProgress = (monthlyPlan / 100) * 100;
-            const yearlyProgress = (yearlyPlan / 100) * 100;
-            document.getElementById('dailyPlanProgress').textContent = `${dailyProgress.toFixed(2)}%`;
-            document.getElementById('dailyPlanBar').value = dailyProgress;
-            document.getElementById('monthlyPlanProgress').textContent = `${monthlyProgress.toFixed(2)}%`;
-            document.getElementById('monthlyPlanBar').value = monthlyProgress;
-            document.getElementById('yearlyPlanProgress').textContent = `${yearlyProgress.toFixed(2)}%`;
-            document.getElementById('yearlyPlanBar').value = yearlyProgress;
-            // 完成计划进度更新，触发奖励
-            giveReward();
-        });
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
 
-        // 随机切换趣味小人
-        const emojis = ['😊', '😎', '🥳', '🤩', '😜']; // 更多emoji可自行添加
-        document.getElementById('changeEmoji').addEventListener('click', () => {
-            const randomIndex = Math.floor(Math.random() * emojis.length);
-            document.getElementById('emoji').textContent = emojis[randomIndex];
-        });
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 25 * 60;
+            const timer = document.getElementById('timer');
+            timer.textContent = '25:00';
+        }
 
-        // 自定义背景音乐
-        document.getElementById('playMusic').addEventListener('click', () => {
-            const file = document.getElementById('musicFile').files[0];
+        // 日月年计划
+        function updatePlanProgress() {
+            dailyTarget = parseInt(document.getElementById('daily-target').value);
+            monthlyTarget = parseInt(document.getElementById('monthly-target').value);
+            yearlyTarget = parseInt(document.getElementById('yearly-target').value);
+
+            const dailyProgress = (currentWordCount / dailyTarget) * 100;
+            const monthlyProgress = (currentWordCount / monthlyTarget) * 100;
+            const yearlyProgress = (currentWordCount / yearlyTarget) * 100;
+
+            document.getElementById('daily-progress').textContent = `日计划进度：${dailyProgress.toFixed(2)}%`;
+            document.getElementById('monthly-progress').textContent = `月计划进度：${monthlyProgress.toFixed(2)}%`;
+            document.getElementById('yearly-progress').textContent = `年计划进度：${yearlyProgress.toFixed(2)}%`;
+
+            checkRewardPunishment(dailyProgress);
+
+            // 更新柱状图
+            updateBarChart(dailyProgress, monthlyProgress, yearlyProgress);
+
+            // 保存数据到本地存储
+            localStorage.setItem('dailyTarget', dailyTarget);
+            localStorage.setItem('monthlyTarget', monthlyTarget);
+            localStorage.setItem('yearlyTarget', yearlyTarget);
+        }
+
+        // 更新柱状图
+        function updateBarChart(daily, monthly, yearly) {
+            const chart = document.getElementById('plan-chart');
+            chart.innerHTML = `
+                <div class="bar" style="width: ${Math.min(daily, 100)}%">日计划: ${daily.toFixed(2)}%</div>
+                <div class="bar" style="width: ${Math.min(monthly, 100)}%">月计划: ${monthly.toFixed(2)}%</div>
+                <div class="bar" style="width: ${Math.min(yearly, 100)}%">年计划: ${yearly.toFixed(2)}%</div>
+            `;
+        }
+
+        // 奖励惩罚机制
+        function checkRewardPunishment(progress) {
+            const rewardPunishmentText = document.getElementById('reward-punishment-text');
+            const characterIcon = document.getElementById('character-icon');
+
+            if (progress >= 100) {
+                rewardPunishmentText.textContent = '恭喜你，完成目标！奖励 1 金币';
+                characterIcon.textContent = '😎';
+                goldCount++;
+            } else if (progress < 50) {
+                rewardPunishmentText.textContent = '加油哦，进度落后啦，惩罚扣除 1 金币！';
+                characterIcon.textContent = '😢';
+                if (goldCount > 0) {
+                    goldCount--;
+                }
+            } else {
+                rewardPunishmentText.textContent = '继续保持，你做得很棒！';
+                characterIcon.textContent = '😀';
+            }
+
+            document.getElementById('gold-value').textContent = goldCount;
+            localStorage.setItem('goldCount', goldCount);
+        }
+
+        // 自定义背景音乐功能
+        const musicPlayer = document.getElementById('music-player');
+        const musicFileInput = document.getElementById('music-file');
+
+        function playMusic() {
+            const file = musicFileInput.files[0];
             if (file) {
-                const audio = new Audio(URL.createObjectURL(file));
-                audio.play();
+                const objectURL = URL.createObjectURL(file);
+                musicPlayer.src = objectURL;
+                musicPlayer.play();
             }
-        });
-        document.getElementById('pauseMusic').addEventListener('click', () => {
-            const audioElements = document.querySelectorAll('audio');
-            audioElements.forEach(audio => audio.pause());
-        });
+        }
 
-        // 自定义背景
-        document.getElementById('applyBackground').addEventListener('click', () => {
-            const file = document.getElementById('backgroundFile').files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    document.body.style.backgroundImage = `url('${e.target.result}')`;
-                    document.getElementById('backgroundFileName').textContent = file.name;
-                    localStorage.setItem('backgroundDataUrl', e.target.result);
-                    localStorage.setItem('backgroundFileName', file.name);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-        document.getElementById('saveBackground').addEventListener('click', () => {
-            const dataUrl = localStorage.getItem('backgroundDataUrl');
-            if (dataUrl) {
-                document.body.style.backgroundImage = `url('${dataUrl}')`;
-            }
-        });
+        function pauseMusic() {
+            musicPlayer.pause();
+        }
 
-        // 自定义卡片颜色
-        document.getElementById('applyCardColor').addEventListener('click', () => {
-            const color = document.getElementById('cardColor').value;
+        // 自定义背景颜色和图案功能
+        const backgroundColorInput = document.getElementById('background-color');
+        const backgroundImageInput = document.getElementById('background-image');
+
+        function applyBackground() {
+            const color = backgroundColorInput.value;
+            const imageFile = backgroundImageInput.files[0];
+
+            if (imageFile) {
+                const objectURL = URL.createObjectURL(imageFile);
+                document.body.style.background = `url(${objectURL})`;
+                document.body.style.backgroundSize = 'cover';
+            } else {
+                document.body.style.backgroundColor = color;
+            }
+        }
+
+        function saveBackground() {
+            const color = backgroundColorInput.value;
+            const imageFile = backgroundImageInput.files[0];
+
+            if (imageFile) {
+                const objectURL = URL.createObjectURL(imageFile);
+                localStorage.setItem('bgImage', objectURL);
+            } else {
+                localStorage.removeItem('bgImage');
+            }
+            localStorage.setItem('bgColor', color);
+            alert('背景设置已保存，刷新页面后生效。');
+        }
+
+        // 自定义卡片颜色功能
+        const cardColorInput = document.getElementById('card-color');
+
+        function applyCardColor() {
+            const color = cardColorInput.value;
             const cards = document.querySelectorAll('.card');
-            cards.forEach(card => card.style.backgroundColor = color);
-            localStorage.setItem('cardColor', color);
-        });
-        document.getElementById('saveCardColor').addEventListener('click', () => {
-            const color = document.getElementById('cardColor').value;
-            localStorage.setItem('cardColor', color);
-        });
-
-        // 奖励函数
-        function giveReward() {
-            const coin = Math.floor(Math.random() * 30) + 1;
-            const coinCountElement = document.getElementById('coinCount');
-            const currentCoins = parseInt(coinCountElement.textContent);
-            const newCoins = currentCoins + coin;
-            coinCountElement.textContent = newCoins;
-            document.getElementById('rewardMessage').textContent = `恭喜你，完成任务！奖励 ${coin} 金币`;
-            // 保存金币数量到本地存储
-            localStorage.setItem('coinCount', newCoins);
+            cards.forEach(card => {
+                card.style.backgroundColor = color;
+                card.style.backgroundImage = 'none';
+            });
         }
 
-        // 页面加载时恢复状态
-        window.onload = () => {
-            // 恢复背景
-            const savedDataUrl = localStorage.getItem('backgroundDataUrl');
-            const savedFileName = localStorage.getItem('backgroundFileName');
-            if (savedDataUrl && savedFileName) {
-                document.body.style.backgroundImage = `url('${savedDataUrl}')`;
-                document.getElementById('backgroundFileName').textContent = savedFileName;
-            }
-            // 恢复卡片颜色
-            const savedColor = localStorage.getItem('cardColor');
-            if (savedColor) {
-                const cards = document.querySelectorAll('.card');
-                cards.forEach(card => card.style.backgroundColor = savedColor);
-            }
-            // 恢复金币数量
-            const savedCoins = localStorage.getItem('coinCount');
-            if (savedCoins) {
-                document.getElementById('coinCount').textContent = savedCoins;
-            }
-        };
+        function saveCardColor() {
+            const color = cardColorInput.value;
+            localStorage.setItem('cardColor', color);
+            alert('卡片颜色已保存，刷新页面后生效。');
+        }
     </script>
 </body>
 
